@@ -16,7 +16,7 @@ pthread_t t1, t2; //индефикатор потока
 
 void	*print1(void *buf)
 {
-	//pthread_detach(t1); // эта функция позволяет работать 
+	//pthread_detach(t1); // эта функция позволяет работать
 						//потоку самостоятельно или все же можно применить pthread_join в вызывающей функции
 	for (int i = 0; i < 10; i++)
 	{
@@ -44,11 +44,11 @@ void	threads(void)
 
 
 	pthread_create(&t1, NULL, print1, (void *)str1); //(принимает: t1 - индефикатор потока, 2 - атрибуты, 3 - указатель на фукцию, 4 - аргументы которая принимается функция)
-	pthread_create(&t2, NULL, print2, (void *)str2); //в этих функциях выделяется память 
+	pthread_create(&t2, NULL, print2, (void *)str2); //в этих функциях выделяется память
 
 	pthread_join(t1, NULL); // поток завершается либо ретерн либо питред exit
 	pthread_join(t2, NULL);
-
+	
 	write(1, "Exit\n", 5);
 }
 

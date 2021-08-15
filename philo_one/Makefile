@@ -11,8 +11,8 @@ GCC		= gcc -Wall -Wextra -Werror
 all	: $(NAME)
 
 $(NAME)	: $(HEADER) $(OBJS)
-	$(GCC) $(OBJS) -o $(NAME)
-	@clear
+	$(GCC) $(OBJS) -o $(NAME) -pthread
+#	@clear
 	@echo Play?
 
 clean	:
