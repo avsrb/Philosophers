@@ -27,8 +27,8 @@ typedef struct s_ph
 	pthread_t		thread_id;
 	int				ph_id;
 	int				ate;
-	pthread_mutex_t	*left_fork;
-	pthread_mutex_t	*right_fork;
+	int				left_fork;
+	int				right_fork;
 	long long		t_last_meal;
 
 }			t_ph;
@@ -60,6 +60,12 @@ typedef struct s_data
 
 /***** parcing *****/
 int	parcing(t_table *table, char **argv);
+
+/***** init *****/
+int		mem_allocation(t_data *data);
+void	init_philos(t_data *data);
+int		init(t_data *data);
+int		init_mutexes(t_table *table);
 
 /***** printing *****/
 int		write_error(char *str);

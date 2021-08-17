@@ -1,6 +1,6 @@
 #include "philo.h"
 
-void	ft_putchar(char c)
+static void	ft_putchar(char c)
 {
 	write (1, &c, 1);
 }
@@ -47,21 +47,20 @@ static void	ft_putnbr_ll(long long n)
 
 void	ft_message(t_data *data, int ph_id, char *str)
 {
-	pthread_mutex_lock(&data->table->message);
 	int	len;
 
+	pthread_mutex_lock(&data->table->message);
 	len = 0;
 	while (str[len])
 		len++;
-	if(!(data->table->dieded))
+	if (!(data->table->dieded))
 	{	
 		ft_putnbr_ll(timestamp() - data->table->start_time);
-		// printf("%d %s\n", ph_id, len);
-		write(1, " ", 1);
+		ft_putchar(' ');
 		ft_putnbr(ph_id);
-		write(1, " ", 1);
+		ft_putchar(' ');
 		write(1, str, len);
-		write(1, "\n", 1);
+		ft_putchar('\n');
 	}
 	pthread_mutex_unlock(&data->table->message);
 }

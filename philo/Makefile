@@ -2,7 +2,7 @@ NAME	= philo
 
 HEADER	=	./philo.h
 
-LIST	=	main.c	parser.c	printing.c	time.c
+LIST	=	main.c parser.c printing.c time.c init.c
 
 OBJS	=	$(LIST:.c=.o)
 
