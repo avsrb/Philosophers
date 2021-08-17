@@ -50,7 +50,6 @@ typedef struct s_table
 
 }			t_table;
 
-
 typedef struct s_data
 {
 	t_ph		*ph;
@@ -59,14 +58,15 @@ typedef struct s_data
 }			t_data;
 
 
-/*
-*	parcing
-*/
+/***** parcing *****/
 int	parcing(t_table *table, char **argv);
 
+/***** printing *****/
+int		write_error(char *str);
+void	ft_message(t_data *data, int ph_id, char *str);
 
-int	write_error(char *str);
-
-
+/***** time *****/
+long long	timestamp(void);
+void		ft_sleep(long long time);
 
 #endif
