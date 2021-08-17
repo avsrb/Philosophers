@@ -44,7 +44,8 @@ typedef struct s_table
 	int		t_sleep;
 	int		must_to_eat;
 
-	int		all_ate;
+	int			dieded;
+	int			all_ate;
 	long long		start_time;
 
 }			t_table;

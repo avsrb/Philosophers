@@ -22,13 +22,12 @@ long long	timestamp(void)
 
 void	ft_message(t_data *data, int ph_id, char *str)
 {
-	printf("msg\n");
 	pthread_mutex_lock(&data->table->message);
-	// if(!(data->dieded))
-	// {	
+	if(!(data->table->dieded))
+	{	
 		printf("%lld ", timestamp() - data->table->start_time);
 		printf("%d %s\n", ph_id, str);
-	// }
+	}
 	pthread_mutex_unlock(&data->table->message);
 }
 
@@ -45,17 +44,11 @@ int	write_error(char *str)
 	return(-1);
 }
 
-
-long long	time_diff(long long past, long long pres)
-{
-	return (pres - past);
-}
-
 void	ft_sleep(long long time)
 {
-	while (timestamp() - time > 0)
+	while (time - timestamp() > 0)
 	{
-		usleep(300);
+		usleep(100);
 	}
 	return ;
 }
@@ -92,7 +85,7 @@ void	init_philos(t_data *data)
 
 	i = 0;
 
-	while (data->table->nbr_ph > i)
+	while (i < data->table->nbr_ph)
 	{
 		data->ph[i].ph_id = i + 1;
 		data->ph[i].left_fork = &data->table->forks[i];
@@ -103,6 +96,38 @@ void	init_philos(t_data *data)
 	return ;
 }
 
+int	monitoring(t_data *data)
+{
+	int	i;
+	
+	while (1)
+	{
+		i = 0;
+		while (i < data->table->nbr_ph)
+		{
+			if(data->table->t_die > timestamp() + data->ph->t_last_meal)
+			{
+				write(1, "jopka\n", 6);
+				printf("t_die %d\n", data->table->t_die);
+				printf("ttttt %lld\n", timestamp() - data->ph->t_last_meal);
+
+				ft_message(data, data->ph->ph_id, "died");
+				data->table->dieded = 1;
+				
+				return (1);
+			}
+			if (data->ph->ate % (data->table->must_to_eat * data->table->nbr_ph) && data->table->all_ate != 0)
+			{
+				ft_message(data, data->ph->ph_id, "the end");
+				return (1);
+			}
+			usleep (50);
+			i++;
+		}
+	}
+	return (0);
+}
+
 void	eating(t_data *data, t_ph *ph)
 {
 	// t_data	*data = ph->data;
@@ -111,8 +136,8 @@ void	eating(t_data *data, t_ph *ph)
 	ft_message(data, ph->ph_id, "has taken a left fork");
 	pthread_mutex_lock(ph->right_fork);
 	ft_message(data, ph->ph_id, "has taken a right fork");
-	if (timestamp() - ph->t_last_meal > data->table->t_eat)
-		pthread_mutex_lock(ph->right_fork);
+	// if (timestamp() - ph->t_last_meal > data->table->t_eat)
+	// 	pthread_mutex_lock(ph->right_fork);
 	ph->t_last_meal = timestamp();
 	ph->ate++;
 	ft_message(data, ph->ph_id, "is eating");
@@ -127,7 +152,6 @@ void	*life(void *v_data)
 	t_ph	*ph = data->ph + data->ind_cur;
 	
 	ph->t_last_meal = timestamp();
-	printf("%s %d\n", "cheated", ph->ph_id);
 	while (1)
 	{
 		eating(data, ph);
@@ -135,6 +159,41 @@ void	*life(void *v_data)
 		ft_sleep(timestamp() + data->table->t_sleep);
 		ft_message(data, ph->ph_id, "is thinking");
 	}
+}
+
+int	mem_free(t_data *data)
+{	
+	int	i;
+
+	i = 0;
+	pthread_mutex_unlock(data->ph->right_fork);
+
+	while (i < data->table->nbr_ph)
+	{
+		if (pthread_detach(data->ph[i].thread_id))
+			return (-1);
+		i++;
+	}
+	free(data->ph);
+	free(data->table->forks);
+	return (0);
+}
+
+int	creating_philos(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	while (i < data->table->nbr_ph)
+	{
+		data->ind_cur = i;
+		data->table->start_time = timestamp();
+		if (pthread_create(&data->ph[i].thread_id, NULL, &life, data))
+			return (-1);
+		usleep(50);
+		i++;
+	}
+	return (0);
 }
 
 int	init(t_data *data)
@@ -147,20 +206,6 @@ int	init(t_data *data)
 	if (init_mutexes(data->table))
 		return(write_error("Init mutex"));
 	init_philos(data);
-	// data->table->start_time = timestamp(); 
-	// while (data->table->nbr_ph > i++)
-	printf("%d\n", data->table->nbr_ph);
-	while (i < data->table->nbr_ph)
-	{
-		data->ind_cur = i;
-		if (pthread_create(&data->ph[i].thread_id, NULL, &life, data))
-			return (-1);
-		usleep(50);
-		i++;
-	}
-	write(1, "allo\n", 5);
-	pthread_join(data->ph[i - 1].thread_id, NULL);
-	write(1, "poka\n", 5);
 	return (0);
 }
 
@@ -170,21 +215,19 @@ int	main(int argc, char **argv)
 	t_data	data;
 	data.table = &table;
 
-	// data.table = malloc(sizeof(*data.table));
 	if (argc < 5 || argc > 6)
 		return(write_error("Not enough arguments"));
 	if (parcing(&table, argv))
 		return(write_error("Incorrect_arguments"));
 	if (init(&data))
 		return(write_error("Init"));
-	
-	// printf("\n%d\n", data.ph[0].ph_id);
-	// printf("%d\n", data.ph[1].ph_id);
-	// printf("%d\n", data.ph[2].ph_id);
-	// printf("%d\n", data.ph[3].ph_id);
-	// printf("%d\n", data.ph[4].ph_id);
-	// printf("lf%d\n", data.ph[4].left_fork);
-	// printf("rf%d\n", data.ph[4].right_fork);
+	if (creating_philos(&data))
+		return(write_error("Create pthreads"));
+	if (monitoring(&data))
+		return(1);
+
+	mem_free(&data);
+
 	return (0);
 }
 
