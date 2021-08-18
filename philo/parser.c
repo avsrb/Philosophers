@@ -43,16 +43,15 @@ int	parcing(t_table *table, char **argv)
 	table->t_eat = ft_atoi_int(argv[3]);
 	table->t_sleep = ft_atoi_int(argv[4]);
 	table->all_ate = 0;
-	table->dieded = 0;
-	if(argv[5])
+	if (argv[5])
 	{
 		table->must_to_eat = ft_atoi_int(argv[5]);
 		if (table->must_to_eat <= 0)
 			return (1);
 	}
 	else
-		table->must_to_eat = -1;
-	if(table->nbr_ph < 0 || table->t_die < 0 || table->t_eat < 0
+		table->must_to_eat = INT_MAX;
+	if (table->nbr_ph <= 0 || table->t_die < 0 || table->t_eat < 0
 		|| table->t_sleep < 0 || table->nbr_ph > 200)
 		return (1);
 	return (0);

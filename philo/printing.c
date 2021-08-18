@@ -47,33 +47,36 @@ static void	ft_putnbr_ll(long long n)
 
 void	ft_message(t_data *data, int ph_id, char *str)
 {
-	int	len;
+	int			len;
+	uint64_t	tt;
 
-	pthread_mutex_lock(&data->table->message);
 	len = 0;
 	while (str[len])
 		len++;
-	if (!(data->table->dieded))
-	{	
-		ft_putnbr_ll(timestamp() - data->table->start_time);
+	tt = timestamp() - data->table->start_time;
+	if (tt >= 0)
+	{
+		pthread_mutex_lock(&data->table->message);
+		ft_putnbr_ll(tt);
 		ft_putchar(' ');
 		ft_putnbr(ph_id);
 		ft_putchar(' ');
 		write(1, str, len);
 		ft_putchar('\n');
 	}
-	pthread_mutex_unlock(&data->table->message);
+	if (str != DIED)
+		pthread_mutex_unlock(&data->table->message);
 }
 
 int	write_error(char *str)
 {
 	int	len;
-	
+
 	len = 0;
 	while (str[len])
 		len++;
 	write(2, "Error: ", 8);
 	write(2, str, len);
 	write(2, "\n", 1);
-	return(-1);
+	return (-1);
 }

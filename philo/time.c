@@ -1,6 +1,6 @@
 #include "philo.h"
 
-long long	timestamp(void)
+uint64_t	timestamp(void)
 {
 	struct timeval	t;
 
@@ -8,18 +8,12 @@ long long	timestamp(void)
 	return ((t.tv_sec * 1000) + (t.tv_usec / 1000));
 }
 
-void	ft_sleep(long long time)
+void	ft_sleep(uint64_t time)
 {
-	long long	start;
-	long long	now;
+	uint64_t	start;
 
 	start = timestamp();
-	now = start;
-
-	while (time > now - start)
-	{
-		now = timestamp();
-		usleep(300);
-	}
+	while (time > timestamp() - start)
+		usleep(100);
 	return ;
 }
