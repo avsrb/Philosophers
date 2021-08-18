@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
 int	mem_allocation(t_data *data)
 {
@@ -35,15 +35,6 @@ int	mem_free(t_data *data)
 			return (-1);
 		i++;
 	}
-	i = 0;
-	while (i < data->table->nbr_ph)
-	{
-		if (pthread_mutex_destroy(data->table->forks + i))
-			return (-1);
-		i++;
-	}
-	if (pthread_mutex_destroy(&data->table->message))
-		return (-1);
 	free(data->ph);
 	free(data->table->forks);
 	return (0);
