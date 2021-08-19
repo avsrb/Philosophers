@@ -90,5 +90,5 @@ int	write_error(char *str)
 	write(2, "Error: ", 8);
 	write(2, str, len);
 	write(2, "\n", 1);
-	return (-1);
+	exit (1);
 }

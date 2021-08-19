@@ -84,10 +84,18 @@ int	creating_philos(t_data *data)
 	{
 		data->table->start_time = timestamp();
 		data->ind_cur = i;
-		if (pthread_create(&data->ph[i].thread_id, NULL, life, data))
-			return (-1);
-		usleep(50);
-		i++;
+		data->ph[i - 1] = fork();
+		if (data->ph[i - 1])
+			i++;
+		else
+		{
+			//запуск жизни типа поточная функция 
+			exit(1);
+		}
+		// if (pthread_create(&data->ph[i].thread_id, NULL, life, data))
+		// 	return (-1);
+		// usleep(50);
+		// i++;
 	}
 	return (0);
 }

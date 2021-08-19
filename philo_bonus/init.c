@@ -12,15 +12,14 @@
 
 #include "philo_bonus.h"
 
-int	mem_allocation(t_data *data)
+int	mem_allocation(t_data *d)
 {
-	data->ph = malloc(sizeof(*data->ph) * data->table->nbr_ph);
-	if (data->ph == 0)
+	d->ph = malloc(sizeof(*d->ph) * d->table->nbr_ph);
+	if (d->ph == 0)
 		return (-1);
-	data->table->forks = malloc(sizeof(*data->table->forks) \
-								* data->table->nbr_ph);
-	if (data->ph == 0)
-		return (-1);
+	d->table->forks = malloc(sizeof(*d->table->forks) * d->table->nbr_ph);// надо ли
+	if (data->ph == 0)// надо ли
+		return (-1);// надо ли
 	return (0);
 }
 
@@ -36,23 +35,20 @@ int	mem_free(t_data *data)
 		i++;
 	}
 	free(data->ph);
-	free(data->table->forks);
+	// free(data->table->forks);
 	return (0);
 }
 
-int	init_mutexes(t_table *table)
+int	init_forks(t_table *table)
 {
-	int	i;
-
-	i = 0;
-	while (table->nbr_ph > i)
-	{
-		if (pthread_mutex_init(table->forks + i, NULL))
-			return (-1);
-		i++;
-	}
-	if (pthread_mutex_init(&table->message, NULL))
-		return (-1);
+	sem_unlink("forks");
+	sem_unlink("message");
+	table->forks = sem_open("forks", O_CREAT, 0666, table->nbr_ph);
+	if (table->forks == 0)
+		exit(1);
+	table->message = sem_open("message", O_CREAT, 0666, table->nbr_ph);
+	if (table->message == 0)
+		exit(1);
 	return (0);
 }
 
@@ -64,8 +60,8 @@ void	init_philos(t_data *d)
 	while (i < d->table->nbr_ph)
 	{
 		d->ph[i].ph_id = i + 1;
-		d->ph[i].left_fork = &d->table->forks[i];
-		d->ph[i].right_fork = &d->table->forks[(i + 1) % d->table->nbr_ph];
+		// d->ph[i].left_fork = &d->table->forks[i];
+		// d->ph[i].right_fork = &d->table->forks[(i + 1) % d->table->nbr_ph];
 		d->ph[i].ate = 0;
 		i++;
 	}
