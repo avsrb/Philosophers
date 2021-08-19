@@ -30,7 +30,7 @@ int	monitoring(t_data *data, int i)
 				i++;
 			if (i < data->table->nbr_ph)
 			{
-				pthread_mutex_lock(&data->table->message);
+				// pthread_mutex_lock(&data->table->message);
 				write (1, "THE END\n", 8);
 				return (1);
 			}
@@ -42,20 +42,20 @@ int	monitoring(t_data *data, int i)
 
 void	eating(t_data *data, t_ph *ph)
 {
-	pthread_mutex_lock(ph->left_fork);
+	sem_wait(data->table->forks);
 	ft_message(data, ph->ph_id, FORK);
-	pthread_mutex_lock(ph->right_fork);
+	sem_wait(data->table->forks);
 	ft_message(data, ph->ph_id, FORK);
 	if (data->table->must_to_eat == ph->ate)
 		data->table->all_ate++;
 	if (timestamp() - ph->t_last_meal > data->table->t_die)
-		pthread_mutex_lock(ph->left_fork);
+		sem_wait(data->table->forks);
 	ph->t_last_meal = timestamp();
 	ft_message(data, ph->ph_id, EAT);
 	ft_sleep(data->table->t_eat);
 	ph->ate++;
-	pthread_mutex_unlock(ph->left_fork);
-	pthread_mutex_unlock(ph->right_fork);
+	sem_post(data->table->forks);
+	sem_post(data->table->forks);
 }
 
 void	*life(void *v_data)
@@ -75,6 +75,13 @@ void	*life(void *v_data)
 	}
 }
 
+void	child_life(t_data *data, int i)
+{
+	if (pthread_create(&data->ph[i].thread_id, NULL, life, data))
+		exit(1);
+	usleep(50);
+}
+
 int	creating_philos(t_data *data)
 {
 	int	i;
@@ -84,17 +91,16 @@ int	creating_philos(t_data *data)
 	{
 		data->table->start_time = timestamp();
 		data->ind_cur = i;
-		data->ph[i - 1] = fork();
-		if (data->ph[i - 1])
+		data->ph[i - 1].pid = fork();
+		if (data->ph[i - 1].pid)
 			i++;
 		else
 		{
-			//запуск жизни типа поточная функция 
+
+			// child_life(data, i);
 			exit(1);
 		}
-		// if (pthread_create(&data->ph[i].thread_id, NULL, life, data))
-		// 	return (-1);
-		// usleep(50);
+
 		// i++;
 	}
 	return (0);

@@ -31,7 +31,7 @@
 
 typedef struct s_ph
 {
-	int			pid;
+	pid_t		pid;
 	int			ph_id;
 	int			ate;
 	uint64_t	t_last_meal;
@@ -41,8 +41,8 @@ typedef struct s_ph
 
 typedef struct s_table
 {
-	sem_t		*forks;
 	sem_t		message;
+	sem_t		*forks;
 	uint64_t	start_time;
 	int			nbr_ph;
 	int			t_die;

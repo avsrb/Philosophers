@@ -68,7 +68,7 @@ void	ft_message(t_data *data, int ph_id, char *str)
 	tt = timestamp() - data->table->start_time;
 	if (tt >= 0)
 	{
-		pthread_mutex_lock(&data->table->message);
+		// pthread_mutex_lock(&data->table->message);
 		ft_putnbr_ll(tt);
 		ft_putchar(' ');
 		ft_putnbr(ph_id);
@@ -76,8 +76,8 @@ void	ft_message(t_data *data, int ph_id, char *str)
 		write(1, str, len);
 		ft_putchar('\n');
 	}
-	if (str != DIED)
-		pthread_mutex_unlock(&data->table->message);
+	//if (str != DIED)
+		// pthread_mutex_unlock(&data->table->message);
 }
 
 int	write_error(char *str)

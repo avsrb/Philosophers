@@ -18,7 +18,7 @@ int	mem_allocation(t_data *d)
 	if (d->ph == 0)
 		return (-1);
 	d->table->forks = malloc(sizeof(*d->table->forks) * d->table->nbr_ph);// надо ли
-	if (data->ph == 0)// надо ли
+	if (d->table->forks == 0)// надо ли
 		return (-1);// надо ли
 	return (0);
 }
@@ -46,9 +46,9 @@ int	init_forks(t_table *table)
 	table->forks = sem_open("forks", O_CREAT, 0666, table->nbr_ph);
 	if (table->forks == 0)
 		exit(1);
-	table->message = sem_open("message", O_CREAT, 0666, table->nbr_ph);
-	if (table->message == 0)
-		exit(1);
+	// table->message = *sem_open("message", O_CREAT, 0666, table->nbr_ph);
+	// if (table->message == 0)
+	// 	exit(1);
 	return (0);
 }
 
@@ -75,8 +75,9 @@ int	init(t_data *data)
 	i = 0;
 	if (mem_allocation(data))
 		return (write_error("mem_allocation"));
-	if (init_mutexes(data->table))
-		return (write_error("Init mutex"));
+	
+	if (init_forks(data->table))
+		return (write_error("Init sem"));
 	init_philos(data);
 	return (0);
 }
