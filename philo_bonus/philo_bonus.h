@@ -41,7 +41,7 @@ typedef struct s_ph
 
 typedef struct s_table
 {
-	sem_t		message;
+	sem_t		*message;
 	sem_t		*forks;
 	uint64_t	start_time;
 	int			nbr_ph;

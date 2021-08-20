@@ -35,7 +35,7 @@ int	mem_free(t_data *data)
 		i++;
 	}
 	free(data->ph);
-	// free(data->table->forks);
+	free(data->table->forks);
 	return (0);
 }
 
@@ -46,9 +46,9 @@ int	init_forks(t_table *table)
 	table->forks = sem_open("forks", O_CREAT, 0666, table->nbr_ph);
 	if (table->forks == 0)
 		exit(1);
-	// table->message = *sem_open("message", O_CREAT, 0666, table->nbr_ph);
-	// if (table->message == 0)
-	// 	exit(1);
+	table->message = sem_open("message", O_CREAT, 0666, table->nbr_ph);
+	if (table->message == 0)
+		exit(1);
 	return (0);
 }
 
@@ -75,7 +75,6 @@ int	init(t_data *data)
 	i = 0;
 	if (mem_allocation(data))
 		return (write_error("mem_allocation"));
-	
 	if (init_forks(data->table))
 		return (write_error("Init sem"));
 	init_philos(data);
