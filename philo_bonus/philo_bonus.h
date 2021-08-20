@@ -22,6 +22,7 @@
 # include <limits.h>
 # include <sys/time.h>
 # include <limits.h>
+# include <signal.h>
 
 # define DIED	"died"
 # define LFORK	"has taken a left fork"

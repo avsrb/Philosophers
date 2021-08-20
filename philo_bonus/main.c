@@ -94,7 +94,7 @@ void	child_life(t_data *d)
 		// 	write (1, "THE END\n", 8);
 		// 	exit (1);
 		// }
-		usleep (500);
+		usleep (50);
 	}
 }
 
@@ -109,25 +109,22 @@ int	creating_philos(t_data *data)
 	{
 		data->ind_cur = i;
 		data->ph[i].pid = fork();
-		usleep(500);
+		usleep(50);
 		if (data->ph[i].pid == 0)
 		{
 			child_life(data);
 			exit(1);
 		}
 		else
-		{
 			i++;
-		}
 	}
 	wait(0);
 	i = 0;
 	while (i < data->table->nbr_ph)
 	{
-		kill(data->ph[i].pid);
+		kill(data->ph[i].pid, SIGKILL);
 		i++;
 	}
-	
 	return (0);
 }
 

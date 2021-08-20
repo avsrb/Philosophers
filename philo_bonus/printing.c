@@ -72,7 +72,7 @@ void	ft_message(t_data *data, int ph_id, char *str)
 		sem_wait(data->table->message);
 		ft_putnbr_ll(tt);
 		ft_putchar(' ');
-		ft_putnbr(ph_id+1);
+		ft_putnbr(ph_id);
 		ft_putchar(' ');
 		write(1, str, len);
 		ft_putchar('\n');
