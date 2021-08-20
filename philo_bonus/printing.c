@@ -63,21 +63,22 @@ void	ft_message(t_data *data, int ph_id, char *str)
 	uint64_t	tt;
 
 	len = 0;
+	tt = 0;
 	while (str[len])
 		len++;
 	tt = timestamp() - data->table->start_time;
 	if (tt >= 0)
 	{
-		// sem_wait(data->table->message);
+		sem_wait(data->table->message);
 		ft_putnbr_ll(tt);
 		ft_putchar(' ');
-		ft_putnbr(ph_id);
+		ft_putnbr(ph_id+1);
 		ft_putchar(' ');
 		write(1, str, len);
 		ft_putchar('\n');
 	}
-	// if (str != DIED)
-		// sem_post(data->table->message);
+	if (str != DIED)
+		sem_post(data->table->message);
 }
 
 int	write_error(char *str)

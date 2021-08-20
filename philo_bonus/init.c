@@ -42,11 +42,11 @@ int	mem_free(t_data *data)
 int	init_forks(t_table *table)
 {
 	sem_unlink("forks");
-	sem_unlink("message");
-	table->forks = sem_open("forks", O_CREAT, 0666, table->nbr_ph);
+	table->forks = sem_open("forks", O_CREAT, S_IRWXU, table->nbr_ph);
 	if (table->forks == 0)
 		exit(1);
-	table->message = sem_open("message", O_CREAT, 0666, table->nbr_ph);
+	sem_unlink("message");
+	table->message = sem_open("message", O_CREAT, S_IRWXU, 1);
 	if (table->message == 0)
 		exit(1);
 	return (0);

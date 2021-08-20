@@ -24,7 +24,8 @@
 # include <limits.h>
 
 # define DIED	"died"
-# define FORK	"has taken a fork"
+# define LFORK	"has taken a left fork"
+# define RFORK	"has taken a right fork"
 # define EAT	"is eating"
 # define SLEEP	"is slepping"
 # define THINK	"is thinking"
@@ -75,5 +76,6 @@ void		ft_message(t_data *data, int ph_id, char *str);
 // time
 uint64_t	timestamp(void);
 void		ft_sleep(uint64_t time);
+uint64_t	time_current(uint64_t start);
 
 #endif
