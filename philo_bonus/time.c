@@ -27,6 +27,6 @@ void	ft_sleep(uint64_t time)
 
 	start = timestamp();
 	while (time > timestamp() - start)
-		usleep(100);
+		usleep(300);
 	return ;
 }

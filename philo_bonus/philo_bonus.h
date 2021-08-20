@@ -47,9 +47,9 @@ typedef struct s_table
 	sem_t		*forks;
 	uint64_t	start_time;
 	int			nbr_ph;
-	int			t_die;
-	int			t_eat;
-	int			t_sleep;
+	uint64_t	t_die;
+	uint64_t	t_eat;
+	uint64_t	t_sleep;
 	int			must_to_eat;
 	int			all_ate;
 
