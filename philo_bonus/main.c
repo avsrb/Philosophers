@@ -12,87 +12,69 @@
 
 #include "philo_bonus.h"
 
-// int	monitoring(t_data *data, int i)
-// {
-// 	while (1)
-// 	{
-// 		i = 0;
-// 		while (i++ < data->table->nbr_ph)
-// 		{
-// 			if (timestamp() - data->ph[i].t_last_meal > data->table->t_die)
-// 			{
-// 				ft_message(data, data->ph->ph_id, DIED);
-// 				return (1);
-// 			}
-// 			i = 0;
-// 			while (i < data->table->nbr_ph && data->ph[i].ate \
-// 				< data->table->must_to_eat)
-// 				i++;
-// 			if (i < data->table->nbr_ph)
-// 			{
-// 				// pthread_mutex_lock(&data->table->message);
-// 				write (1, "THE END\n", 8);
-// 				return (1);
-// 			}
-// 			usleep (500);
-// 		}
-// 	}
-// 	return (0);
-// }
-
 void	eating(t_data *data, t_ph *ph)
 {
 	sem_wait(data->table->forks);
 	ft_message(data, ph->ph_id, LFORK);
 	sem_wait(data->table->forks);
 	ft_message(data, ph->ph_id, RFORK);
-	// if (data->table->must_to_eat == ph->ate)
-	// 	data->table->all_ate++;
 	if (timestamp() - ph->t_last_meal > data->table->t_die)
-	{	
-		sem_post(data->table->message);
+	{
+		printf("%llu - %llu = %llu > %llu\n", timestamp(),  ph->t_last_meal, timestamp() - ph->t_last_meal, data->table->t_die);
+		write(1, "exit\n", 5);
+		exit(1);
 	}
-	ph->t_last_meal = timestamp();
 	ft_message(data, ph->ph_id, EAT);
+	ph->t_last_meal = timestamp();
 	ft_sleep(data->table->t_eat);
 	ph->ate++;
 	sem_post(data->table->forks);
 	sem_post(data->table->forks);
+
+	ft_message(data, ph->ph_id, SLEEP);
+	ft_sleep(data->table->t_sleep);
+	ft_message(data, ph->ph_id, THINK);
 }
 
-void	*life(void *v_data)
+void	*ph_life(void *v_data)
 {
 
 	t_data	*d;
-	t_ph	*ph;
+	// t_ph	*ph;
 
 	d = v_data;
-	ph = d->ph + d->ind_cur;
-	ph->t_last_meal = timestamp();
+	d->ph->ph_id = d->ind_cur;
+	// ph->t_last_meal = timestamp();
+	// pthread_detach(ph->thread_id);
+	// d->table->start_time = timestamp();
 	while (1)
 	{
-		eating(d, ph);
-		if (timestamp() - ph->t_last_meal > d->table->t_die)
-		{	
-			sem_post(d->table->message);
-			ft_message(d, ph->ph_id, DIED);
-			exit (1);
-		}
-		ft_message(d, ph->ph_id, SLEEP);
-		ft_sleep(d->table->t_sleep);
-		ft_message(d, ph->ph_id, THINK);
+		eating(d, d->ph);
 	}
 }
 
 void	child_life(t_data *d)
 {
-	if (pthread_create(&d->ph->thread_id, NULL, life, d))
-		exit(1);
-	if (pthread_join(d->ph->thread_id, NULL))
+	d->ph->t_last_meal = timestamp();
+	if (pthread_create(&d->ph->thread_id, NULL, ph_life, d))
 		exit(1);
 
+
+	// if (pthread_join(d->ph->thread_id, NULL))
+	// 	exit(1);
 	while (1)
 	{
+		usleep(3000);
+		// printf("%llu - %llu = %llu > %llu\n", timestamp(),  d->ph->t_last_meal, timestamp() - d->ph->t_last_meal, d->table->t_die);
+		if (timestamp() - d->ph->t_last_meal > d->table->t_die)
+		{
+			// printf("%llu - %llu = %llu > %llu\n", timestamp(),  d->ph->t_last_meal, timestamp() - d->ph->t_last_meal, d->table->t_die);
+			sem_wait(d->table->message);
+			ft_message(d, d->ph->ph_id, DIED);
+			exit (1);
+		}
+		// if (d->ph->ate < d->table->must_to_eat)
+		// 	exit (0);
 		// if (timestamp() - d->ph->t_last_meal > d->table->t_die)
 		// {
 		// 	printf("%lld - %lld = %lld %lld", timestamp(), d->ph->t_last_meal, (timestamp() - d->ph->t_last_meal), d->table->t_die);
@@ -121,6 +103,7 @@ void	child_life(t_data *d)
 int	creating_philos(t_data *data)
 {
 	int	i;
+	int	status;
 
 	i = 0;
 	data->table->start_time = timestamp();
@@ -138,7 +121,7 @@ int	creating_philos(t_data *data)
 		else
 			i++;
 	}
-	wait(0);
+	waitpid(-1, &status, 0);
 	i = 0;
 	while (i < data->table->nbr_ph)
 	{
