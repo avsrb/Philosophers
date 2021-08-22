@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mshmelly <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mshmelly <mshmelly@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/18 17:45:05 by mshmelly          #+#    #+#             */
-/*   Updated: 2021/08/18 17:45:10 by mshmelly         ###   ########.fr       */
+/*   Updated: 2021/08/22 20:58:43 by mshmelly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	init_forks(t_table *table)
 	if (table->forks == 0)
 		exit(1);
 	sem_unlink("message");
-	table->message = sem_open("message", O_CREAT, S_IRWXU, 1);
+	table->message = sem_open("message", O_CREAT, S_IRWXU, table->nbr_ph); //1 
 	if (table->message == 0)
 		exit(1);
 	return (0);

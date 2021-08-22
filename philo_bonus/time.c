@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   time.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mshmelly <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mshmelly <mshmelly@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/18 17:46:09 by mshmelly          #+#    #+#             */
-/*   Updated: 2021/08/18 17:46:11 by mshmelly         ###   ########.fr       */
+/*   Updated: 2021/08/22 20:53:27 by mshmelly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,14 @@ uint64_t	timestamp(void)
 void	ft_sleep(uint64_t time)
 {
 	uint64_t	start;
+	uint64_t	current;
 
 	start = timestamp();
+	current = start;
 	while (time > timestamp() - start)
+	{
+		current = timestamp();
 		usleep(300);
+	}
 	return ;
 }

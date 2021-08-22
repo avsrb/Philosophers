@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mshmelly <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mshmelly <mshmelly@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/09 13:35:09 by mshmelly          #+#    #+#             */
-/*   Updated: 2021/08/18 17:45:23 by mshmelly         ###   ########.fr       */
+/*   Updated: 2021/08/22 20:51:40 by mshmelly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,12 @@ void	eating(t_data *data, t_ph *ph)
 		write(1, "exit\n", 5);
 		exit(1);
 	}
-	ft_message(data, ph->ph_id, EAT);
 	ph->t_last_meal = timestamp();
+	ft_message(data, ph->ph_id, EAT);
 	ft_sleep(data->table->t_eat);
+	sem_post(data->table->forks);
+	sem_post(data->table->forks);
 	ph->ate++;
-	sem_post(data->table->forks);
-	sem_post(data->table->forks);
-
 	ft_message(data, ph->ph_id, SLEEP);
 	ft_sleep(data->table->t_sleep);
 	ft_message(data, ph->ph_id, THINK);
@@ -40,13 +39,14 @@ void	*ph_life(void *v_data)
 {
 
 	t_data	*d;
-	// t_ph	*ph;
-
+	
 	d = v_data;
+	pthread_detach(d->ph->thread_id);
+	d->table->start_time = timestamp();
+	d->ph->t_last_meal = timestamp();
 	d->ph->ph_id = d->ind_cur;
-	// ph->t_last_meal = timestamp();
+	// d->ph->t_last_meal = timestamp();
 	// pthread_detach(ph->thread_id);
-	// d->table->start_time = timestamp();
 	while (1)
 	{
 		eating(d, d->ph);
@@ -55,17 +55,11 @@ void	*ph_life(void *v_data)
 
 void	child_life(t_data *d)
 {
-	d->ph->t_last_meal = timestamp();
 	if (pthread_create(&d->ph->thread_id, NULL, ph_life, d))
 		exit(1);
-
-
-	// if (pthread_join(d->ph->thread_id, NULL))
-	// 	exit(1);
 	while (1)
 	{
-		usleep(3000);
-		// printf("%llu - %llu = %llu > %llu\n", timestamp(),  d->ph->t_last_meal, timestamp() - d->ph->t_last_meal, d->table->t_die);
+		usleep(100);
 		if (timestamp() - d->ph->t_last_meal > d->table->t_die)
 		{
 			// printf("%llu - %llu = %llu > %llu\n", timestamp(),  d->ph->t_last_meal, timestamp() - d->ph->t_last_meal, d->table->t_die);
@@ -73,8 +67,8 @@ void	child_life(t_data *d)
 			ft_message(d, d->ph->ph_id, DIED);
 			exit (1);
 		}
-		// if (d->ph->ate < d->table->must_to_eat)
-		// 	exit (0);
+		if (d->ph->ate > d->table->must_to_eat + 1 && d->table->must_to_eat != INT_MAX)
+			exit (0);
 		// if (timestamp() - d->ph->t_last_meal > d->table->t_die)
 		// {
 		// 	printf("%lld - %lld = %lld %lld", timestamp(), d->ph->t_last_meal, (timestamp() - d->ph->t_last_meal), d->table->t_die);
@@ -105,9 +99,7 @@ int	creating_philos(t_data *data)
 	int	i;
 	int	status;
 
-	i = 0;
-	data->table->start_time = timestamp();
-	
+	i = 0;	
 	while (i < data->table->nbr_ph)
 	{
 		data->ind_cur = i;
