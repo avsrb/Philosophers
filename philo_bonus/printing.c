@@ -31,26 +31,6 @@ static void	ft_putchar(char c)
 	write (1, &c, 1);
 }
 
-static void	ft_putnbr(int n)
-{
-	if (n == -2147483648)
-	{
-		write(1, "-2147483648", 11);
-	}
-	else if (n < 0)
-	{		
-		write(1, "-", 1);
-		ft_putnbr(-n);
-	}
-	else if (n > 9)
-	{
-		ft_putnbr(n / 10);
-		ft_putnbr(n % 10);
-	}
-	else
-		ft_putchar(n + '0');
-}
-
 static void	ft_putnbr_ll(long long n)
 {
 	if (n == -9223372036854775807)
@@ -60,12 +40,12 @@ static void	ft_putnbr_ll(long long n)
 	else if (n < 0)
 	{		
 		write(1, "-", 1);
-		ft_putnbr(-n);
+		ft_putnbr_ll(-n);
 	}
 	else if (n > 9)
 	{
-		ft_putnbr(n / 10);
-		ft_putnbr(n % 10);
+		ft_putnbr_ll(n / 10);
+		ft_putnbr_ll(n % 10);
 	}
 	else
 		ft_putchar(n + '0');
@@ -86,7 +66,7 @@ void	ft_message(t_data *data, int ph_id, char *str)
 		sem_wait(data->table->message);
 		ft_putnbr_ll(tt);
 		ft_putchar(' ');
-		ft_putnbr(ph_id + 1);
+		ft_putnbr_ll(ph_id + 1);
 		ft_putchar(' ');
 		write(1, str, len);
 		ft_putchar('\n');

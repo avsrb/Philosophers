@@ -20,18 +20,14 @@ uint64_t	timestamp(void)
 	return (t.tv_sec * 1000 + t.tv_usec / 1000);
 }
 
-
 void	ft_sleep(uint64_t time)
 {
 	uint64_t	start;
-	uint64_t	current;
 
 	start = timestamp();
-	current = start;
-	while (time > current - start)
+	while (time > timestamp() - start)
 	{
-		current = timestamp();
-		usleep(300);
+		usleep(50);
 	}
 	return ;
 }

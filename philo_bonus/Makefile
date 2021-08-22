@@ -4,17 +4,20 @@ HEADER	=	./philo_bonus.h
 
 LIST	=	main.c parser.c printing.c time.c init.c
 
-GCC		= gcc -Wall -Wextra -Werror -g
+CC		= gcc 
+
+CFLAGS	= -Wall -Wextra -Werror -I.
+
 OBJS	=	$(LIST:.c=.o)
 
-%.o:			%.c ${HEADER}
-				$(GCC) -c -o $@ $<
-
+.PHONY	: all clean fclean re bonus
 
 all	: $(NAME)
 
+$(OBJS)	: $(HEADER)
+
 $(NAME)	: $(HEADER) $(OBJS)
-	$(GCC) $(OBJS) -o $(NAME) -pthread
+	$(CC) $(CFLAGS) $(OBJS) -o $(NAME) -pthread
 #	@clear
 	@echo Play?
 
@@ -25,12 +28,3 @@ fclean	: clean
 	rm -f $(NAME)
 
 re		: fclean all
-
-g 		:
-	git add .
-	git commit -m "update"
-	git push
-
-
-
-.PHONY	: all clean fclean re bonus

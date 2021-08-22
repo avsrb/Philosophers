@@ -20,9 +20,7 @@ void	eating(t_data *data, t_ph *ph)
 	ft_message(data, ph->ph_id, RFORK);
 	if (timestamp() - ph->t_last_meal > data->table->t_die)
 	{
-		printf("%llu - %llu = %llu > %llu\n", timestamp(),  ph->t_last_meal, timestamp() - ph->t_last_meal, data->table->t_die);
-		write(1, "exit\n", 5);
-		exit(1);
+		sem_wait(data->table->forks);
 	}
 	ph->t_last_meal = timestamp();
 	ft_message(data, ph->ph_id, EAT);
@@ -37,11 +35,9 @@ void	eating(t_data *data, t_ph *ph)
 
 void	*ph_life(void *v_data)
 {
-
 	t_data	*d;
-	
+
 	d = v_data;
-	pthread_detach(d->ph->thread_id);
 	d->ph->t_last_meal = timestamp();
 	d->ph->ph_id = d->ind_cur;
 	while (1)
@@ -56,47 +52,25 @@ void	child_life(t_data *d)
 		exit(1);
 	while (1)
 	{
-		usleep(100);
+		usleep(500);
 		if (timestamp() - d->ph->t_last_meal > d->table->t_die)
 		{
-			// printf("%llu - %llu = %llu > %llu\n", timestamp(),  d->ph->t_last_meal, timestamp() - d->ph->t_last_meal, d->table->t_die);
-			sem_wait(d->table->message);
 			ft_message(d, d->ph->ph_id, DIED);
 			exit (1);
 		}
-		if (d->ph->ate > d->table->must_to_eat + 1 && d->table->must_to_eat != INT_MAX)
-			exit (0);
-		// if (timestamp() - d->ph->t_last_meal > d->table->t_die)
-		// {
-		// 	printf("%lld - %lld = %lld %lld", timestamp(), d->ph->t_last_meal, (timestamp() - d->ph->t_last_meal), d->table->t_die);
-		// 	sem_wait(d->table->forks);
-		// 	ft_message(d, d->ph->ph_id, DIED);
-		// 	exit (1);
-		// }
-		// if (timestamp() - d->ph->t_last_meal > d->table->t_die)
-		// {
-		// 	printf("%lld - %lld = %lld %d", timestamp(), d->ph->t_last_meal, timestamp() - d->ph->t_last_meal, d->table->t_die);
-		// 	sem_wait(d->table->forks);
-		// 	ft_message(d, d->ph->ph_id, DIED);
-		// 	exit (1);
-		// }
-		// if (d->ph->ate < d->table->must_to_eat) // && d->table->must_to_eat != INT_MAX)
-		// {
-		// 	// pthread_mutex_lock(&data->table->message);
-		// 	// sem_wait(d->table->message);
-		// 	write (1, "THE END\n", 8);
-		// 	exit (1);
-		// }
-		// usleep (50);
+		if (d->ph->ate > d->table->must_to_eat \
+			&& d->table->must_to_eat != INT_MAX)
+		{
+			exit (1);
+		}
 	}
 }
 
 int	creating_philos(t_data *data)
 {
 	int	i;
-	int	status;
 
-	i = 0;	
+	i = 0;
 	data->table->start_time = timestamp();
 	while (i < data->table->nbr_ph)
 	{	
@@ -111,13 +85,6 @@ int	creating_philos(t_data *data)
 		else
 			i++;
 	}
-	waitpid(-1, &status, 0);
-	i = 0;
-	while (i < data->table->nbr_ph)
-	{
-		kill(data->ph[i].pid, SIGKILL);
-		i++;
-	}
 	return (0);
 }
 
@@ -125,8 +92,11 @@ int	main(int argc, char **argv)
 {
 	t_table	table;
 	t_data	data;
+	int		i;
+	int		status;
 
 	data.table = &table;
+	i = 0;
 	if (argc < 5 || argc > 6)
 		return (write_error("Not enough arguments"));
 	if (parcing(&table, argv))
@@ -135,8 +105,12 @@ int	main(int argc, char **argv)
 		return (write_error("Init"));
 	if (creating_philos(&data))
 		return (write_error("Create pthreads"));
-	// monitoring(&data, 0);
-
 	mem_free(&data);
+	waitpid(-1, &status, 0);
+	while (i < data.table->nbr_ph)
+	{
+		kill(data.ph[i].pid, SIGKILL);
+		i++;
+	}
 	return (0);
 }

@@ -52,8 +52,6 @@ typedef struct s_table
 	uint64_t	t_sleep;
 	int			must_to_eat;
 	int			all_ate;
-
-
 }			t_table;
 
 typedef struct s_data

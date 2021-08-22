@@ -6,14 +6,19 @@ LIST	=	main.c parser.c printing.c time.c init.c
 
 OBJS	=	$(LIST:.c=.o)
 
-GCC		= gcc -Wall -Wextra -Werror -g
+CC		= gcc 
+CFLAGS	= -Wall -Wextra -Werror -I.
+
+.PHONY	: all clean fclean re bonus
 
 all	: $(NAME)
 
 $(NAME)	: $(HEADER) $(OBJS)
-	$(GCC) $(OBJS) -o $(NAME) -pthread
+	$(CC) $(CFLAGS) $(OBJS) -o $(NAME) -pthread
 #	@clear
 	@echo Play?
+
+$(OBJS)	: $(HEADER)
 
 clean	:
 	rm -f $(OBJS)
@@ -22,5 +27,3 @@ fclean	: clean
 	rm -f $(NAME)
 
 re		: fclean all
-
-.PHONY	: all clean fclean re bonus

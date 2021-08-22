@@ -17,9 +17,6 @@ int	mem_allocation(t_data *d)
 	d->ph = malloc(sizeof(*d->ph) * d->table->nbr_ph);
 	if (d->ph == 0)
 		return (-1);
-	d->table->forks = malloc(sizeof(*d->table->forks) * d->table->nbr_ph);// надо ли
-	if (d->table->forks == 0)// надо ли
-		return (-1);// надо ли
 	return (0);
 }
 
@@ -28,25 +25,24 @@ int	mem_free(t_data *data)
 	int	i;
 
 	i = 0;
-	// while (i < data->table->nbr_ph)
-	// {
-	// 	if (pthread_detach(data->ph[i].thread_id))
-	// 		return (-1);
-	// 	i++;
-	// }
+	while (i < data->table->nbr_ph)
+	{
+		if (pthread_detach(data->ph[i].thread_id))
+			return (-1);
+		i++;
+	}
 	free(data->ph);
-	free(data->table->forks);
 	return (0);
 }
 
 int	init_forks(t_table *table)
 {
 	sem_unlink("forks");
+	sem_unlink("message");
 	table->forks = sem_open("forks", O_CREAT, S_IRWXU, table->nbr_ph);
 	if (table->forks == 0)
 		exit(1);
-	sem_unlink("message");
-	table->message = sem_open("message", O_CREAT, S_IRWXU, 1); //1 
+	table->message = sem_open("message", O_CREAT, S_IRWXU, 1);
 	if (table->message == 0)
 		exit(1);
 	return (0);
