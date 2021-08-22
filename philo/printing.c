@@ -3,38 +3,32 @@
 /*                                                        :::      ::::::::   */
 /*   printing.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mshmelly <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mshmelly <mshmelly@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/18 17:46:00 by mshmelly          #+#    #+#             */
-/*   Updated: 2021/08/18 17:46:02 by mshmelly         ###   ########.fr       */
+/*   Updated: 2021/08/23 00:50:33 by mshmelly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+int	ft_strcmp(const char *s1, const char *s2)
+{
+	size_t	i;
+
+	i = 0;
+	while ((*(s1 + i) || *(s2 + i)))
+	{	
+		if (*(s1 + i) != *(s2 + i))
+			return (*(unsigned char *)(s1 + i) - *(unsigned char *)(s2 + i));
+		i++;
+	}
+	return (0);
+}
+
 static void	ft_putchar(char c)
 {
 	write (1, &c, 1);
-}
-
-static void	ft_putnbr(int n)
-{
-	if (n == -2147483648)
-	{
-		write(1, "-2147483648", 11);
-	}
-	else if (n < 0)
-	{		
-		write(1, "-", 1);
-		ft_putnbr(-n);
-	}
-	else if (n > 9)
-	{
-		ft_putnbr(n / 10);
-		ft_putnbr(n % 10);
-	}
-	else
-		ft_putchar(n + '0');
 }
 
 static void	ft_putnbr_ll(long long n)
@@ -46,12 +40,12 @@ static void	ft_putnbr_ll(long long n)
 	else if (n < 0)
 	{		
 		write(1, "-", 1);
-		ft_putnbr(-n);
+		ft_putnbr_ll(-n);
 	}
 	else if (n > 9)
 	{
-		ft_putnbr(n / 10);
-		ft_putnbr(n % 10);
+		ft_putnbr_ll(n / 10);
+		ft_putnbr_ll(n % 10);
 	}
 	else
 		ft_putchar(n + '0');
@@ -71,12 +65,12 @@ void	ft_message(t_data *data, int ph_id, char *str)
 		pthread_mutex_lock(&data->table->message);
 		ft_putnbr_ll(tt);
 		ft_putchar(' ');
-		ft_putnbr(ph_id);
+		ft_putnbr_ll(ph_id);
 		ft_putchar(' ');
 		write(1, str, len);
 		ft_putchar('\n');
 	}
-	if (str != DIED)
+	if (ft_strcmp(str, DIED))
 		pthread_mutex_unlock(&data->table->message);
 }
 
