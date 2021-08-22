@@ -42,11 +42,8 @@ void	*ph_life(void *v_data)
 	
 	d = v_data;
 	pthread_detach(d->ph->thread_id);
-	d->table->start_time = timestamp();
 	d->ph->t_last_meal = timestamp();
 	d->ph->ph_id = d->ind_cur;
-	// d->ph->t_last_meal = timestamp();
-	// pthread_detach(ph->thread_id);
 	while (1)
 	{
 		eating(d, d->ph);
@@ -100,8 +97,9 @@ int	creating_philos(t_data *data)
 	int	status;
 
 	i = 0;	
+	data->table->start_time = timestamp();
 	while (i < data->table->nbr_ph)
-	{
+	{	
 		data->ind_cur = i;
 		data->ph[i].pid = fork();
 		usleep(50);

@@ -107,6 +107,6 @@ int	main(int argc, char **argv)
 	if (creating_philos(&data))
 		return (write_error("Create pthreads"));
 	monitoring(&data, 0);
-	mem_free(&data);
+	mem_free(&data); // порешать с детачем или джойном 
 	return (0);
 }

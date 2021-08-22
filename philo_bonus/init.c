@@ -28,12 +28,12 @@ int	mem_free(t_data *data)
 	int	i;
 
 	i = 0;
-	while (i < data->table->nbr_ph)
-	{
-		if (pthread_detach(data->ph[i].thread_id))
-			return (-1);
-		i++;
-	}
+	// while (i < data->table->nbr_ph)
+	// {
+	// 	if (pthread_detach(data->ph[i].thread_id))
+	// 		return (-1);
+	// 	i++;
+	// }
 	free(data->ph);
 	free(data->table->forks);
 	return (0);
@@ -46,7 +46,7 @@ int	init_forks(t_table *table)
 	if (table->forks == 0)
 		exit(1);
 	sem_unlink("message");
-	table->message = sem_open("message", O_CREAT, S_IRWXU, table->nbr_ph); //1 
+	table->message = sem_open("message", O_CREAT, S_IRWXU, 1); //1 
 	if (table->message == 0)
 		exit(1);
 	return (0);
@@ -60,8 +60,6 @@ void	init_philos(t_data *d)
 	while (i < d->table->nbr_ph)
 	{
 		d->ph[i].ph_id = i + 1;
-		// d->ph[i].left_fork = &d->table->forks[i];
-		// d->ph[i].right_fork = &d->table->forks[(i + 1) % d->table->nbr_ph];
 		d->ph[i].ate = 0;
 		i++;
 	}
