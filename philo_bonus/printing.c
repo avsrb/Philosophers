@@ -3,14 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   printing.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mshmelly <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mshmelly <mshmelly@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/18 17:46:00 by mshmelly          #+#    #+#             */
-/*   Updated: 2021/08/18 17:46:02 by mshmelly         ###   ########.fr       */
+/*   Updated: 2021/08/22 16:42:34 by mshmelly         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
+
+int	ft_strcmp(const char *s1, const char *s2)
+{
+	size_t	i;
+
+	i = 0;
+	while ((*(s1 + i) || *(s2 + i)))
+	{	
+		if (*(s1 + i) != *(s2 + i))
+			return (*(unsigned char *)(s1 + i) - *(unsigned char *)(s2 + i));
+		i++;
+	}
+	return (0);
+}
 
 static void	ft_putchar(char c)
 {
@@ -77,7 +91,7 @@ void	ft_message(t_data *data, int ph_id, char *str)
 		write(1, str, len);
 		ft_putchar('\n');
 	}
-	if (str != DIED)
+	if (ft_strcmp(str, DIED))
 		sem_post(data->table->message);
 }
 
