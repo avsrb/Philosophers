@@ -26,7 +26,7 @@ int	monitoring(t_data *data, int i)
 			}
 			i = 0;
 			while (i < data->table->nbr_ph && data->ph[i].ate \
-				< data->table->must_to_eat)
+				<= data->table->must_to_eat)
 				i++;
 			if (i < data->table->nbr_ph)
 			{
