@@ -46,8 +46,6 @@ void	eating(t_data *data, t_ph *ph)
 	ft_message(data, ph->ph_id, FORK);
 	pthread_mutex_lock(ph->right_fork);
 	ft_message(data, ph->ph_id, FORK);
-	if (data->table->must_to_eat == ph->ate)
-		data->table->all_ate++;
 	if (timestamp() - ph->t_last_meal > data->table->t_die)
 		pthread_mutex_lock(ph->left_fork);
 	ph->t_last_meal = timestamp();
@@ -107,7 +105,6 @@ int	main(int argc, char **argv)
 	if (creating_philos(&data))
 		return (write_error("Create pthreads"));
 	monitoring(&data, 0);
-	if (mem_free(&data))
-		return (write_error("Mem free"));
+	mem_free(&data);
 	return (0);
 }
